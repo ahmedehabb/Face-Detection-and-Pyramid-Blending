@@ -1,0 +1,51 @@
+import xml.etree.ElementTree as ET
+
+from pipeline.classifier import Classifier_Stump
+from pipeline.stage import Stage
+from pipeline.rectangle import Rectangle
+from pipeline.feature import Feature
+from pipeline.cascade_classifier import Cascade_Classifier
+
+def parse_haar_cascade_xml(xml_file: str = "data/haarcascades/haarcascade_frontalface_default.xml") :
+#-> tuple[list[int], list[int]]:
+    
+    # reads the xml features and stages file from opencv pretrained models
+    all = ET.parse(xml_file)
+    cascade = all.find("cascade")
+    
+    # width , height = int(cascade.find("width").text), int(cascade.find("height").text)
+    stages = cascade.find("stages")
+    features = cascade.find("features")
+    stages_list, features_list = [], []
+    for stage in stages:
+
+        classifiers = stage.find("weakClassifiers")
+        stage_threshold = stage.find("stageThreshold")
+        classifiers_list = []
+        for classifier in classifiers:
+
+            internal_nodes = map(float, (classifier.find("internalNodes").text).split())
+            leaf_values = map(float, (classifier.find("leafValues").text).split())
+
+            left_node, right_node, feature_idx, node_threshold = internal_nodes
+            left_node_val, right_node_val = leaf_values
+            classifiers_list.append(Classifier_Stump((left_node,left_node_val), (right_node,right_node_val), feature_idx, node_threshold))
+
+        stages_list.append(Stage(classifiers_list, stage_threshold))
+    for feature in features:
+
+        rects = feature.find("rects")
+        rects_list = []
+
+        for rect in rects:
+            # It obviously describes parameters of rectangle (x, y, width, height) and the weight of rectangle. 
+            x, y, rect_width, rect_height, rect_weight = map(float, (rect.text).split())
+            rects_list.append(Rectangle(x, y, rect_width, rect_height, rect_weight))
+        
+        features_list.append(Feature(rects_list))
+
+
+    return Cascade_Classifier(stages_list,features_list)
+
+print(parse_haar_cascade_xml())
+
