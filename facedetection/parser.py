@@ -6,14 +6,13 @@ from pipeline.rectangle import Rectangle
 from pipeline.feature import Feature
 from pipeline.cascade_classifier import Cascade_Classifier
 
-def parse_haar_cascade_xml(xml_file: str = "data/haarcascades/haarcascade_frontalface_default.xml") :
-#-> tuple[list[int], list[int]]:
+def parse_haar_cascade_xml(xml_file: str = "facedetection/data/haarcascades/haarcascade_frontalface_default.xml") -> Cascade_Classifier :
     
     # reads the xml features and stages file from opencv pretrained models
     all = ET.parse(xml_file)
     cascade = all.find("cascade")
     
-    # width , height = int(cascade.find("width").text), int(cascade.find("height").text)
+    width , height = int(cascade.find("width").text), int(cascade.find("height").text)
     stages = cascade.find("stages")
     features = cascade.find("features")
     stages_list, features_list = [], []
@@ -45,7 +44,8 @@ def parse_haar_cascade_xml(xml_file: str = "data/haarcascades/haarcascade_fronta
         features_list.append(Feature(rects_list))
 
 
-    return Cascade_Classifier(stages_list,features_list)
+    return Cascade_Classifier(stages_list, features_list, width, height)
 
-print(parse_haar_cascade_xml())
+# cascade : Cascade_Classifier = parse_haar_cascade_xml()
+
 
