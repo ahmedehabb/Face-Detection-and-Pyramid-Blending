@@ -16,6 +16,21 @@ def parse_haar_cascade_xml(xml_file: str = "facedetection/data/haarcascades/haar
     stages = cascade.find("stages")
     features = cascade.find("features")
     stages_list, features_list = [], []
+
+    # will read features first since will populate them in the classifiers
+    for feature in features:
+
+        rects = feature.find("rects")
+        rects_list = []
+
+        for rect in rects:
+            # It obviously describes parameters of rectangle (x, y, width, height) and the weight of rectangle. 
+            x, y, rect_width, rect_height, rect_weight = map(float, (rect.text).split())
+            x, y, rect_width, rect_height = int(x), int(y), int(rect_width), int(rect_height)
+            rects_list.append(Rectangle(x, y, rect_width, rect_height, rect_weight))
+        
+        features_list.append(Feature(rects_list))
+
     for stage in stages:
 
         classifiers = stage.find("weakClassifiers")
@@ -29,21 +44,10 @@ def parse_haar_cascade_xml(xml_file: str = "facedetection/data/haarcascades/haar
             left_node, right_node, feature_idx, node_threshold = internal_nodes
             left_node, right_node, feature_idx = int(left_node), int(right_node), int(feature_idx)
             left_node_val, right_node_val = leaf_values
-            classifiers_list.append(Classifier_Stump((left_node,left_node_val), (right_node,right_node_val), feature_idx, node_threshold))
+            classifiers_list.append(Classifier_Stump((left_node,left_node_val), (right_node,right_node_val), features_list[feature_idx], node_threshold))
 
         stages_list.append(Stage(classifiers_list, stage_threshold))
-    for feature in features:
-
-        rects = feature.find("rects")
-        rects_list = []
-
-        for rect in rects:
-            # It obviously describes parameters of rectangle (x, y, width, height) and the weight of rectangle. 
-            x, y, rect_width, rect_height, rect_weight = map(float, (rect.text).split())
-            x, y, rect_width, rect_height = int(x), int(y), int(rect_width), int(rect_height)
-            rects_list.append(Rectangle(x, y, rect_width, rect_height, rect_weight))
-        
-        features_list.append(Feature(rects_list))
+    
 
 
     return Cascade_Classifier(stages_list, features_list, width, height)
