@@ -25,8 +25,8 @@ def parse_haar_cascade_xml(xml_file: str = "facedetection/data/haarcascades/haar
 
         for rect in rects:
             # It obviously describes parameters of rectangle (x, y, width, height) and the weight of rectangle. 
-            x, y, rect_width, rect_height, rect_weight = map(float, (rect.text).split())
-            x, y, rect_width, rect_height = int(x), int(y), int(rect_width), int(rect_height)
+            x, y, rect_width, rect_height, rect_weight = map(int, map(float, (rect.text).split()))
+            # x, y, rect_width, rect_height = int(x), int(y), int(rect_width), int(rect_height)
             rects_list.append(Rectangle(x, y, rect_width, rect_height, rect_weight))
         
         features_list.append(Feature(rects_list))
@@ -53,6 +53,6 @@ def parse_haar_cascade_xml(xml_file: str = "facedetection/data/haarcascades/haar
 
     return Cascade_Classifier(stages_list, features_list, width, height)
 
-# cascade : Cascade_Classifier = parse_haar_cascade_xml()
+cascade : Cascade_Classifier = parse_haar_cascade_xml()
 
 
