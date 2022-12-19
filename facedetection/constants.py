@@ -13,4 +13,4 @@ SCALE_FACTOR = 1.25
 
 # The results we present are for delta =1. 
 # We can achieve a significant speedup by setting delta = 1.5 setting with only a slight decrease in accuracy.
-DELTA_SHIFT = 1
+DELTA_SHIFT = 1/6

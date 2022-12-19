@@ -51,8 +51,8 @@ while scale < max_scale:
     integral_window_size = current_window_size[0] + PADDING ,current_window_size[1] + PADDING
 
 
-    for x in range(0, img_width - current_window_size[1] + 1, 1):
-        for y in range(0, img_height - current_window_size[0] + 1, 1):
+    for x in range(0, img_width - current_window_size[1] + 1, int(np.ceil(scale * DELTA_SHIFT))):
+        for y in range(0, img_height - current_window_size[0] + 1, int(np.ceil(scale * DELTA_SHIFT))):
             # window = img[y : y+window_size[0], x : x+window_size[1]]
             # computing the integral window of the current x,y window
             integral_window = integral_image[y : y +  integral_window_size[0] , x : x + integral_window_size[1]]
