@@ -41,10 +41,11 @@ def parse_haar_cascade_xml(xml_file: str = "facedetection/data/haarcascades/haar
             internal_nodes = map(float, (classifier.find("internalNodes").text).split())
             leaf_values = map(float, (classifier.find("leafValues").text).split())
 
-            left_node, right_node, feature_idx, node_threshold = internal_nodes
-            left_node, right_node, feature_idx = int(left_node), int(right_node), int(feature_idx)
+            # skipping left node and right node indexes
+            _, _, feature_idx, node_threshold = internal_nodes
+            feature_idx = int(feature_idx)
             left_node_val, right_node_val = leaf_values
-            classifiers_list.append(Classifier_Stump((left_node,left_node_val), (right_node,right_node_val), features_list[feature_idx], node_threshold))
+            classifiers_list.append(Classifier_Stump(left_node_val, right_node_val, features_list[feature_idx], node_threshold))
 
         stages_list.append(Stage(classifiers_list, stage_threshold))
     
