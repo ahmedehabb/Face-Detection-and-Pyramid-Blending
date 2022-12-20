@@ -12,6 +12,7 @@ import cv2
 
 cascade: Cascade_Classifier = parse_haar_cascade_xml()
 img = io.imread('facedetection/data/images/company.jpeg', as_gray=True)
+# img = cv2.resize(img, (640,480))
 img_2 = np.copy(img)
 
 img_width, img_height = img.shape[1], img.shape[0]
@@ -64,12 +65,12 @@ while scale < max_scale:
             # window = img[y : y+window_size[0], x : x+window_size[1]]
             # computing the integral window of the current x,y window
             integral_window = integral_image[y : y +  integral_window_size[0] , x : x + integral_window_size[1]]
+            # normalizing the integral window mean also to zero
+            integral_window = integral_window - np.mean(integral_window)
             # computing the integral window of the current x,y window
             integral_window_squared = integral_of_image_squared[y : y +  integral_window_size[0] , x : x + integral_window_size[1]]
             # computing the variance. used abs to prevent negative variance issues
             integral_window_variance = np.sqrt(abs(variance(integral_window, integral_window_squared)))
-            # normalizing the integral window mean also to zero
-            integral_window = integral_window - np.mean(integral_window)
             
             
             # print(integral_window_variance)

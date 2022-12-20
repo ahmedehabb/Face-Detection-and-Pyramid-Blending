@@ -16,7 +16,7 @@ class Feature:
             # VERY IMPORTANT !!!
             # take care x,y are with respect to the window (24,24)
             # not wrt to the integral image (25,25)
-            # therefore if you needed for ex from (0,0) and  width, height = 2,2
+            # therefore if you needed for ex from (0,0) and  width, height = 2,2  --- (0,0 -> 1,1)
             # this mean (0,0) will be reflected in the integral image to be (1,1) due to padding made
             # since width, height = 2,2  -> therefore (1,1) -> (2,2) in integral image
             # but we will also need to add prev row and col therefore from (0,0) -> (2,2). WHY ?
@@ -32,8 +32,8 @@ class Feature:
             # 0 3 4
             # and the rect x,y is 1,1 and width, height = 2,2
             # this means you are addressing the window 
-            # 1 2 
-            # 3 4
+            # 1 1
+            # 1 1
             # but you will need the previous column and row to correctly get the sum of the window
             rect_window = integral_image_window[y: y + rect_height + PADDING, x: x + rect_width + PADDING]
             x_end ,y_end  = rect_width + PADDING - 1, rect_height + PADDING - 1
