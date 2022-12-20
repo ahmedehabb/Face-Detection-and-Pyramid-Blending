@@ -23,6 +23,9 @@ img = img - mean
 img = img / np.sqrt(np.var(img))
 # print(np.mean(img), np.var(img))
 
+# TODO:: GET EDGE IMAGE AND PUT CORRECT THRESHOLD
+#  WILL THRESHOLD DEPEND ON WINDOW SIZE? 
+# I THINK YES SINCE EDGES INCREASE AS SIZE OF WINDOW INCREASE 
 
 # edges = canny(img, sigma = 2)
 # # calculating integral image for edges so we can check it before testing windows
@@ -56,7 +59,7 @@ while scale < max_scale:
 
     for x in range(0, img_width - current_window_size[1] + 1, int(np.ceil(scale * DELTA_SHIFT))):
         for y in range(0, img_height - current_window_size[0] + 1, int(np.ceil(scale * DELTA_SHIFT))):
-            # we should check the edge threshold before starting
+            # TODO:: we should check the edge threshold before starting
 
             # window = img[y : y+window_size[0], x : x+window_size[1]]
             # computing the integral window of the current x,y window
@@ -68,9 +71,6 @@ while scale < max_scale:
             # normalizing the integral window mean also to zero
             integral_window = integral_window - np.mean(integral_window)
             
-            # if integral_window_variance < 0.25:
-            #     continue
-            # integral_window_variance = 1
             
             # print(integral_window_variance)
             if(cascade.complete_pass(integral_window, integral_window_variance, scale)):
