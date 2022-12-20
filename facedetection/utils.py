@@ -27,7 +27,7 @@ def variance(integral_window, integral_window_squared):
     width, height = integral_window.shape[1], integral_window.shape[0]
     
     # num_pixels in the current window
-    # removing the padded part of the window in order to calculate the mean wrongly
+    # removing the padded part of the window in order to calculate the mean of the real data not with padded row and col
     num_pixels = (width-PADDING) * (height-PADDING)
     
     # sum of the pixels in the window
