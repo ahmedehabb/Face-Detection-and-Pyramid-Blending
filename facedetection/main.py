@@ -3,7 +3,7 @@ from constants import PADDING, WINDOW_SIZE, SCALE_FACTOR, STARTING_SCALE, DELTA_
 
 from utils import integral_image, integral_of_image_squared, variance
 from pipeline.cascade_classifier import Cascade_Classifier
-from skimage import io,draw
+from skimage import io
 from skimage.feature import canny
 from skimage.filters.edges import sobel_h,sobel_v
 from skimage.exposure import histogram
@@ -11,18 +11,17 @@ import numpy as np
 import cv2
 
 cascade: Cascade_Classifier = parse_haar_cascade_xml()
-img = io.imread('facedetection/data/images/physics.jpg', as_gray=True)
+img = io.imread('facedetection/data/images/company.jpeg', as_gray=True)
 img_2 = np.copy(img)
 
 img_width, img_height = img.shape[1], img.shape[0]
+
 # normalizing image mean and variance
-img_normalized = np.copy(img)
-mean = np.mean(img_normalized)
-img_normalized = img_normalized - mean
+mean = np.mean(img)
+img = img - mean
 # # All example sub-windows used for training were variance normalized to minimize the effect of different lighting conditions.
-img_normalized = img_normalized / np.sqrt(np.var(img_normalized))
-img = img_normalized
-# print(np.mean(img_normalized), np.var(img_normalized))
+img = img / np.sqrt(np.var(img))
+# print(np.mean(img), np.var(img))
 
 
 # edges = canny(img, sigma = 2)
