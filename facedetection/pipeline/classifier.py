@@ -12,7 +12,7 @@ class Classifier_Stump:
     def classify_feature_summary(self, integral_image_window, variance, scale):
         
         # get feature value
-        feature_value = self.feature.compute_feature(integral_image_window, scale) * (1/scale)
+        feature_value = self.feature.compute_feature(integral_image_window, scale)
         
         # All example sub-windows used for training were variance normalized to minimize the effect of different lighting conditions
         # During scanning the effect of image normalization can be achieved by post-multiplying the feature values rather than pre-multiplying the pixels.
