@@ -37,4 +37,7 @@ class Feature:
             value += (rect_window[y_end, x_end] + rect_window[0, 0] - rect_window[0, x_end] - rect_window[y_end, 0]) * rect_weight
             # exit()
             
-        return value / (WINDOW_SIZE[0] * WINDOW_SIZE[1] * scale * scale)
+        # normalize the feature by window area 
+        # also casted each dimension scaled to int since scale * dimension may got non integer which could
+        # make our calculations wrong
+        return value / (int(WINDOW_SIZE[0] * scale) * int(WINDOW_SIZE[1] * scale))
