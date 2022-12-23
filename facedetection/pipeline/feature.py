@@ -2,9 +2,9 @@ from .rectangle import Rectangle
 from constants import PADDING, WINDOW_SIZE
 
 class Feature:
-    def __init__(self, rect_lists : list[Rectangle]) -> None:
+    def __init__(self, rect_lists) -> None:
         self.rect_lists = rect_lists
-        pass
+        return
 
     def compute_feature(self, integral_image_window, scale):
         value = 0
@@ -38,6 +38,7 @@ class Feature:
             rect_window = integral_image_window[y: y + rect_height + PADDING, x: x + rect_width + PADDING]
             x_end ,y_end  = rect_width + PADDING - 1, rect_height + PADDING - 1
             # calculating value of the rectangle
+            # print(y, x,  rect_window.shape, integral_image_window.shape, scale)
             value += (rect_window[y_end, x_end] + rect_window[0, 0] - rect_window[0, x_end] - rect_window[y_end, 0]) * rect_weight
             
         # normalize the feature by window area 

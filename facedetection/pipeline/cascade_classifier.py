@@ -3,12 +3,12 @@ from .feature import Feature
 from .classifier import Classifier_Stump
 
 class Cascade_Classifier:
-    def __init__(self, stages_lists : list[Stage], features_lists : list[Feature], width : int, height : int) -> None:
+    def __init__(self, stages_lists, features_lists, width : int, height : int) -> None:
         self.stages_lists = stages_lists
         self.features_lists = features_lists
         self.width = width
         self.height = height
-        pass
+        return
 
     def move_forward(self, stage_index, integral_image_window, variance, scale) -> bool:
         current_stage : Stage = self.stages_lists[stage_index]
