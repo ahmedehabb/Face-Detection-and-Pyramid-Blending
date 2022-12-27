@@ -2,10 +2,11 @@ import sift
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-MIN_MATCH_COUNT = 2
-img1 = cv2.imread('box.png', 0)           # face image
-print("img1 shape",img1.shape)
-img2 = cv2.imread('box_in_scene.png', 0)  # group image
+MIN_MATCH_COUNT = 10
+img1 = cv2.imread('afifi_alwan.jpg', 0)    # face image
+img1 = cv2.resize(img1,(180,180))
+img2 = cv2.imread('afifi_alwan_2.jpg', 0)  # group image
+img2 = cv2.resize(img2,(400,400))
 
 key1,desc1 = sift.wrapper_SIFT(img1)
 key2,desc2 = sift.wrapper_SIFT(img2)
