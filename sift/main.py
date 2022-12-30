@@ -6,13 +6,23 @@ import skimage.io as io
 MIN_MATCH_COUNT = 5
 
 
-face_image = cv2.imread('afifi_alwan.jpg', 0)    # face image
-if face_image.shape[0] > 200 or face_image.shape[1] > 200:
-    face_image = cv2.resize(face_image,(face_image.shape[0]//2,face_image.shape[1]//2))
+# reading images in rgb so we return images in rgb while all our work will be in gray scale
+face_image_complete = cv2.imread('sift/images/mousa2.jpg') # group image
+face_image_rgb = face_image_complete[650:2500, 3300:4700] #cv2.imread('sift/images/y.jpg')  # face image
+reference_rgb = cv2.imread('sift/images/mousa1.jpg') # group image
 
-reference_image = cv2.imread('afifi_alwan_2.jpg', 0)  # group image
+
+face_image = cv2.cvtColor(face_image_rgb, cv2.COLOR_BGR2GRAY)    # face image
+
+if face_image.shape[0] > 200 or face_image.shape[1] > 200:
+    face_image = cv2.resize(face_image,(face_image.shape[0],face_image.shape[1]))
+    face_image_rgb = cv2.resize(face_image_rgb,(face_image_rgb.shape[0],face_image_rgb.shape[1]))
+
+reference_image = cv2.cvtColor(reference_rgb, cv2.COLOR_BGR2GRAY)  # group image
 if reference_image.shape[0] > 1200 or reference_image.shape[1] > 1200:
-    reference_image = cv2.resize(reference_image,(reference_image.shape[0]//2,reference_image.shape[1]//2))
+    reference_image = cv2.resize(reference_image,(reference_image.shape[0]//8,reference_image.shape[1]//8))
+    reference_rgb = cv2.resize(reference_rgb,(reference_rgb.shape[0]//8,reference_rgb.shape[1]//8))
+    face_image_complete = cv2.resize(face_image_complete,(face_image_complete.shape[0]//8,face_image_complete.shape[1]//8))
 
 
 key1,desc1 = sift.wrapper_SIFT(face_image)
@@ -32,13 +42,12 @@ for m, n in matches:
 
 if len(good) > MIN_MATCH_COUNT:
     # Estimate homography between template and scene
-    src_pts = np.float32([ key1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
-    dst_pts = np.float32([ key2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
-
+    src_pts = np.int32([ key1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
+    dst_pts = np.int32([ key2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
+    
     M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
     
-    matchesMask = mask.ravel().tolist()
-    
+    print(M)
     # Draw detected template in scene image
     h, w = face_image.shape
     pts = np.float32([[0, 0],
@@ -46,20 +55,43 @@ if len(good) > MIN_MATCH_COUNT:
                       [w - 1, h - 1],
                       [w - 1, 0]]).reshape(-1, 1, 2)
 
-    refernece = np.copy(reference_image)
-    img1_mask = cv2.warpPerspective(np.ones_like(face_image), M, (reference_image.shape[1], reference_image.shape[0]))*255
-    img1_transformed = cv2.warpPerspective(face_image, M, (reference_image.shape[1], reference_image.shape[0]))
-    io.imsave('img1_transformed.jpg', img1_transformed)
-    io.imsave('img1_mask.jpg', img1_mask)
-    # cv2.imwrite('img1_transformed.jpg', img1_transformed)
+    img1_mask = cv2.warpPerspective(np.ones_like(face_image)*255 , M, (reference_image.shape[1], reference_image.shape[0]))
+    print(img1_mask)
+    img1_transformed = cv2.warpPerspective(face_image_rgb, M, (reference_image.shape[1], reference_image.shape[0]))
+
+    # io.imsave('sift/images/img1_transformed.jpg', img1_transformed)
     plt.imshow(img1_transformed) #mask with image
     plt.show()
-    x,y = np.where(img1_transformed > 0)   
-     
-    refernece[img1_mask > 0] = img1_transformed[img1_mask > 0]
     
-    cv2.imwrite('refernece.jpg', refernece)
-    plt.imshow(refernece) #mask with image
+    print(M)
+    trM = M[0,2]
+    M[0,2] = 0
+    M[1,2] = 0
+
+    face_image_complete_transformed = cv2.warpPerspective(face_image_complete, M, (face_image_complete.shape[1], face_image_complete.shape[0]))
+    
+    M[0,0] = 1
+    M[0,1] = 0
+    M[1,0] = 0
+    M[1,1] = 1
+    M[0,2] = 3300 - trM
+    M[1,2] = 0
+    face_image_complete_transformed = cv2.warpPerspective(face_image_complete, M, (face_image_complete.shape[1], face_image_complete.shape[0]))
+    
+    io.imsave('sift/images/face_image_complete_transformed.jpg', face_image_complete_transformed)
+    plt.imshow(face_image_complete_transformed) # face_image_complete_transformed
+    plt.show()
+    
+    io.imsave('sift/images/img1_mask.jpg', img1_mask)
+    plt.imshow(img1_mask) #mask with image
+    plt.show()
+    
+    print(reference_rgb.shape , img1_mask.shape, img1_transformed.shape)
+    # putting the needed face on referenced image so we can have background while blending 
+    reference_rgb[img1_mask > 0,:] = img1_transformed[img1_mask > 0,:]
+    
+    cv2.imwrite('sift/images/reference_w_mfatah.jpg', reference_rgb)
+    plt.imshow(reference_rgb) #mask with image
     plt.show()
     dst = cv2.perspectiveTransform(pts, M)
     
