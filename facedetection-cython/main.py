@@ -1,5 +1,3 @@
-from constants import WINDOW_SIZE
-# from pipeline.cascade_classifier import Cascade_Classifier
 import cv2
 from skimage import io
 import numpy as np
@@ -9,7 +7,6 @@ from maincython import whole_loop
 cascade  = parse_haar_cascade_xml()
 
 img = io.imread('facedetection/data/images/company.jpeg',as_gray=True)
-img = cv2.resize(img, (img.shape[1], img.shape[0]))
 
 faces = whole_loop(img, cascade)
 print(faces)

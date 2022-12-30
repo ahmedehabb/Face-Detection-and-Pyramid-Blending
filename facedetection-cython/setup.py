@@ -9,3 +9,7 @@ setup(
     ext_modules=cythonize(["pipeline/rectangle.pyx", "pipeline/classifier.pyx", "pipeline/stage.pyx", "pipeline/cascade_classifier.pyx", "pipeline/feature.pyx",  "parser1.pyx","maincython.pyx"]
     , compiler_directives=directives)
 )
+
+
+# to run this file run
+# python setup.py build_ext --inplace
